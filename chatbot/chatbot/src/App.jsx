@@ -1,42 +1,29 @@
-// App.tsx
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate, BrowserRouter } from 'react-router-dom';
+import Home from './components/Home.jsx';
+import SingUp from './components/SignUp.jsx';
+import Login from './components/Login.jsx';
+import Chatbot from './components/Chatbot.jsx';
+import Navbar from './components/Navbar.jsx';
 
-import { createChat } from '@n8n/chat';
-import './index.css'
-export const App = () => {
-	useEffect(() => {
-		createChat({
-			webhookUrl: 'http://localhost:5678/webhook/b2c85a9d-be34-4bde-b18d-c7cd95d66558/chat',
-      webhookConfig: {
-        method: 'POST',
-        headers: {}
-      },
-      
-      mode: 'window',
-      chatInputKey: 'chatInput',
-      chatSessionKey: 'sessionId',
-      loadPreviousSession: true,
-      metadata: {},
-      showWelcomeScreen: false,
-      defaultLanguage: 'en',
-      initialMessages: [
-        'Escribe para hablar con el Chatbot',
-        
-      ],
-      i18n: {
-        en: {
-          title: 'Chatbot implementos',
-          subtitle: "Start a chat. We're here to help you 24/7.",
-          footer: '',
-          getStarted: 'New Conversation',
-          inputPlaceholder: 'Type your question..',
-        },
-      },
-      enableStreaming: false,
+// --- COMPONENTES DE PÁGINA ---
 
-		});
-	}, []);
+function App() {
+  return (
+    <>
+    <BrowserRouter>
+      <Navbar/>
+      <Routes>
+        <Route path="/" element={<Home></Home>} />
+        <Route path="/Navbar" element={<Navbar/>} />
+        <Route path="/Login" element={<Login></Login>} />
+        <Route path="/chatbot" element={<Chatbot></Chatbot>}/>
+        <Route path="/Registrarse" element={<SingUp></SingUp>} />
+      </Routes>
+    </BrowserRouter>
+    </>
+  )
+}
 
-	return (<div></div>);
-};
 export default App
+
