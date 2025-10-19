@@ -1,0 +1,3 @@
+primero que nada tenemos que tener nodejs instalado, luego descargamos el archivo 
+para inciarlo escribimos npm run dev, ojo que tiene que estar en la carpeta del chatbot no CHATBOT 
+para que funcione el chatbot con la ia hay que tener el n8n activado sino no va a funcionar 
