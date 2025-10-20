@@ -3,10 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Link, useNavigate, BrowserRoute
 import Home from './components/Home.jsx';
 import SingUp from './components/SignUp.jsx';
 import Login from './components/Login.jsx';
-import Chatbot from './components/Chatbot.jsx';
-import Navbar from './components/Navbar.jsx';
 
-// --- COMPONENTES DE PÁGINA ---
+import Navbar from './components/Navbar.jsx';
+import Frontchatbot from './components/Receptor.jsx';
+
 
 function App() {
   return (
@@ -17,8 +17,10 @@ function App() {
         <Route path="/" element={<Home></Home>} />
         <Route path="/Navbar" element={<Navbar/>} />
         <Route path="/Login" element={<Login></Login>} />
-        <Route path="/chatbot" element={<Chatbot></Chatbot>}/>
+       
+        <Route path="/chat" element={<Frontchatbot/>}/>
         <Route path="/Registrarse" element={<SingUp></SingUp>} />
+        
       </Routes>
     </BrowserRouter>
     </>

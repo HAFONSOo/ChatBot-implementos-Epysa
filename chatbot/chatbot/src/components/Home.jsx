@@ -1,9 +1,11 @@
 import React from 'react'
-import Chatbot from './Chatbot'
+import Frontchatbot from './Receptor.jsx'
 
  function Home() {
   return (
-    <div><Chatbot/></div>
+    <div>
+      <Frontchatbot/>
+      </div>
   )
 }
 export default Home
