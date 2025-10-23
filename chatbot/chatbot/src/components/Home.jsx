@@ -1,17 +1,8 @@
 import React from 'react'
-import Frontchatbot from './Receptor.jsx'
-import { FaRobot } from 'react-icons/fa';
-
-// Componente para el ícono
-const EpybotIcon = () => <FaRobot size={32} />;
-
-
- function Home() {
+import Carrusel from './Carrusel.jsx'
+export default function Home() {
   return (
-    <div>
-      <Frontchatbot iconClosed={<EpybotIcon />} />
-      <Frontchatbot/>
-      </div>
+    <Carrusel/>
   )
 }
-export default Home
+

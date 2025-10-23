@@ -16,7 +16,7 @@ export default function SearchBar() {
   return (
     <form 
       onSubmit={handleSearch} 
-      className='w-[500px] relative'
+      className='w-120 '
       role="search" // 3. Rol de accesibilidad
     >
       {/* 4. Label para accesibilidad (oculto visualmente) */}
@@ -32,14 +32,14 @@ export default function SearchBar() {
           placeholder="¿Qué buscas?" 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className='w-full p-4 pr-16 rounded-full bg-white text-gray-800 border-2 border-transparent 
+          className='w-full p-3 pr-10 rounded-full bg-white text-gray-800 border-2 border-transparent 
                      focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-300
                      transition-all duration-300 ease-in-out' // 5. Estilos mejorados
         />
         <button 
           type="submit"
           aria-label="Buscar" // 6. Aria-label para el botón de icono
-          className='absolute right-2 top-1/2 -translate-y-1/2 p-3 bg-slate-900 rounded-full
+          className='absolute right-2 top-1/2 -translate-y-1/2 p-3 colores-epysa rounded-full
                      text-white hover:bg-slate-700 focus:outline-none focus:ring-2 
                      focus:ring-slate-500 transition-colors duration-300'
         >

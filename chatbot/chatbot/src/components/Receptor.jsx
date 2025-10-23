@@ -1,10 +1,10 @@
-// src/components/Receptor.jsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
-import { FiX, FiSend } from 'react-icons/fi'; // Íconos para la UI
+import { FiX, FiSend } from 'react-icons/fi';
+import { TbMessageChatbotFilled } from "react-icons/tb";
 
-// --- TU LÓGICA DE COMUNICACIÓN (SIN CAMBIOS) ---
+
+// --- LÓGICA DE COMUNICACIÓN (SIN CAMBIOS) ---
 async function sendMessageToN8n(message, sessionId) {
   const webhookUrl = 'http://localhost:5678/webhook/80a5663d-7186-4f19-8b15-316f7aac4965';
   const data = { text: message, sessionId: sessionId };
@@ -22,19 +22,15 @@ async function sendMessageToN8n(message, sessionId) {
   }
 }
 
-// --- COMPONENTE CON LA LÓGICA Y VISUAL INTEGRADAS ---
+// --- COMPONENTE DEL CHATBOT ---
 export default function Frontchatbot({ iconClosed }) {
-  // --- TUS ESTADOS Y LÓGICA (SIN CAMBIOS) ---
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
-  // --- ESTADOS Y REFS PARA LA INTERFAZ (AÑADIDOS) ---
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // Tu useEffect original (sin cambios)
   useEffect(() => {
     setSessionId(nanoid());
     setMessages([{
@@ -43,14 +39,12 @@ export default function Frontchatbot({ iconClosed }) {
     }]);
   }, []);
 
-  // useEffect para hacer scroll automático al recibir nuevos mensajes
   useEffect(() => {
     if (isOpen) {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages, isOpen]);
-  
-  // Tu función de envío (sin cambios)
+
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
     const userMessage = { sender: 'user', text: input };
@@ -65,11 +59,10 @@ export default function Frontchatbot({ iconClosed }) {
       setMessages(prev => [...prev, botMessage]);
     }
   };
-  
-  // Tu manejador de "Enter" (sin cambios)
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevenir salto de línea en un textarea, por ejemplo
+      e.preventDefault();
       handleSendMessage();
     }
   };
@@ -83,34 +76,35 @@ export default function Frontchatbot({ iconClosed }) {
     setIsOpen(!isOpen);
   };
 
-  // --- INTERFAZ VISUAL (JSX INTEGRADO) ---
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end font-sans">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans ">
       
       {/* Ventana del Chat (se muestra u oculta) */}
       <div
         className={`
           w-80 sm:w-96 h-[500px] max-h-[70vh] mb-4 bg-white rounded-2xl shadow-2xl
           flex flex-col transition-all duration-300 ease-in-out
-          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}
+          ${isOpen ? ' translate-x-0' : 'hidden translate-x-1000 pointer-events-none'}
         `}
       >
-        {/* Tu Cabecera del Chat + Botón de Cierre */}
-        <div className="p-4 bg-slate-900 text-white rounded-t-2xl flex items-center justify-between shadow-md">
+        {/* Encabezado del Chat */}
+        <div className="p-4 colores-epysa text-white rounded-t-2xl flex items-center justify-between shadow-md">
+           <TbMessageChatbotFilled className='w-8 h-8'/>
           <div className="flex items-center">
-            <img src="src/assets/chatboticon.png" alt="Logo EPYSA" className="w-10 h-10 mr-4" />
+
+          
             <div>
               <p className="text-lg font-semibold">Epybot</p>
               <p className="text-xs text-gray-300">Asistente de Implementos EPYSA</p>
             </div>
           </div>
-          <button onClick={toggleChat} className="p-2 -mr-2 rounded-full hover:bg-white/20">
+          <button onClick={toggleChat} className="p-1 -mr-0 rounded-full hover:bg-white/20 ">
             <FiX size={24} />
           </button>
         </div>
 
-        {/* Tu Área de Mensajes */}
-        <div className="flex-1 p-4 sm:p-6 space-y-4 overflow-y-auto">
+        {/* Área de Mensajes */}
+        <div className="flex-1 p-2 sm:p-6 space-y-4 overflow-y-auto">
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-xs md:max-w-md p-3 rounded-2xl shadow ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}`}>
@@ -132,7 +126,7 @@ export default function Frontchatbot({ iconClosed }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Tu Área de Entrada de Texto */}
+        {/* Área de Entrada de Texto */}
         <form onSubmit={handleFormSubmit} className="p-3 border-t bg-gray-50 rounded-b-2xl">
           <div className="flex items-center space-x-3">
             <input
@@ -154,17 +148,22 @@ export default function Frontchatbot({ iconClosed }) {
           </div>
         </form>
       </div>
-
+        
       {/* Botón Flotante principal para abrir/cerrar */}
       <button
+        
         onClick={toggleChat}
-        className="bg-slate-900 hover:bg-slate-800 text-white w-16 h-16 rounded-full shadow-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 transition-transform transform hover:scale-110"
+        className="bg-blue-600 hover:bg-slate-700 text-white w-16 h-16 rounded-full shadow-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-transform transform hover:scale-110"
         aria-label="Toggle Chatbot"
       >
-        <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-0' : 'opacity-100'}`}>
+        {/* Lógica para mostrar el ícono de cerrado */}
+        <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
           {!isOpen && iconClosed}
+          < TbMessageChatbotFilled className='w-8 h-8'/>
         </div>
-        <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
+        
+        {/* Lógica para mostrar la 'X' de abierto */}
+        <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
           {isOpen && <FiX size={32} />}
         </div>
       </button>

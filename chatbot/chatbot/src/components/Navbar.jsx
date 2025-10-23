@@ -7,9 +7,9 @@ import { IoCartOutline } from "react-icons/io5";
 import BarraBusqueda from "./BarraBusqueda";
 export default function Navbar() {
   return (
-   <header className=" p-4 text-white nvr-implementos" >
+   <header className="  text-white nvr-implementos" >
         <nav className="flex flex-col md:flex-row justify-around items-center">
-            <a href="/"  ><img src="https://www.implementos.cl/assets/images/logos/logo_header.svg "className="md:w-70"  /></a>
+            <a href="/"  ><img src="https://www.implementos.cl/assets/images/logos/logo_header.svg "className="md:w-60"  /></a>
             <BarraBusqueda/>
             <ul className="flex flex-col md:flex-row space-y-4 md:space-0 md:space-x">
                 
