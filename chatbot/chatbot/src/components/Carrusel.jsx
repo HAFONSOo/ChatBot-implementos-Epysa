@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 // Define el componente
 function Carrusel() {
   
@@ -59,17 +60,17 @@ function Carrusel() {
       {/* Botón Izquierdo */}
       <button
         onClick={goToPrevious}
-        className="absolute top-1/2 left-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-3xl cursor-pointer"
+        className="absolute top-1/2 left-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-1xl cursor-pointer"
       >
-        &#10094;
+        <IoIosArrowBack/>
       </button>
 
       {/* Botón derecho */}
       <button
         onClick={goToNext}
-        className="absolute top-1/2 right-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-3xl cursor-pointer"
+        className="absolute top-1/2 right-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-1xl cursor-pointer"
       >
-        &#10095;
+       <IoIosArrowForward/>
       </button>
 
       </div>

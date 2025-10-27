@@ -17,7 +17,7 @@ export default function Navbar() {
                 <li className="p-3 hover:opacity-75 "><Link  to="/" className="hover:text-gray-400 flex-col flex items-center"><TbTruckDelivery size='30'  /><div>San Bernardo</div></Link></li>
                 <li className="p-3 hover:opacity-75"><Link  to="/" className="hover:text-gray-400 flex-col flex items-center "><FaMapMarkedAlt size='30'  /><div>Siguimiento de pedido</div></Link></li>
                 <li className="p-3 hover:opacity-75"><Link  to="/" className="hover:text-gray-400 flex-col flex items-center "><IoCartOutline   size='30'  /><div>Mi carro</div></Link></li>
-                <li className="p-3 hover:opacity-75"><Link  to="/Login" className="hover:text-gray-400 flex-col flex items-center"><IoPersonSharp size='30'  /><div>Mi cuenta</div></Link></li>
+                <li className="p-3 hover:opacity-75"><Link  to="/" className="hover:text-gray-400 flex-col flex items-center"><IoPersonSharp size='30'  /><div>Mi cuenta</div></Link></li>
             </ul>
             </nav>
    </header>
