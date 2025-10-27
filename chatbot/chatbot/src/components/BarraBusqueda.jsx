@@ -43,7 +43,7 @@ export default function SearchBar() {
                      text-white hover:bg-slate-700 focus:outline-none focus:ring-2 
                      focus:ring-slate-500 transition-colors duration-300'
         >
-          <FaSearch />
+          <FaSearch size={10}/>
         </button>
       </div>
     </form>
