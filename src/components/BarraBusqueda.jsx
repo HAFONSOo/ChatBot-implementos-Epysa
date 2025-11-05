@@ -19,7 +19,7 @@ export default function SearchBar() {
       className='w-120 '
       role="search" // 3. Rol de accesibilidad
     >
-      {/* 4. Label para accesibilidad (oculto visualmente) */}
+  
       <label htmlFor="search-input" className="sr-only">
         ¿Qué buscas?
       </label>

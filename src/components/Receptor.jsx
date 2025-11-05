@@ -1,47 +1,13 @@
-
-import { initializeApp } from "firebase/app";
+// src/components/Receptor.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { nanoid } from 'nanoid';
 import { FiX, FiSend, FiUser, FiLock, FiLogIn } from 'react-icons/fi';
 import { TbMessageChatbotFilled } from "react-icons/tb";
 import { MdClose } from "react-icons/md";
 import { PiSignOutBold } from "react-icons/pi";
+import { useCart } from "../context/CartContext"; // Importa el Context del Carro
+import { useAuth } from "../context/AuthContext"; // Importa el Context de Autenticación
 
-
-
-
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut
-} from "firebase/auth";
-
-// --- Configuración de Firebase (Tu configuración) ---
-const firebaseConfigString = typeof __firebase_config !== 'undefined'
-  ? __firebase_config
-  : JSON.stringify({
-      apiKey: "AIzaSyCpmT0yVz2P8VmAY4zpqRILRaEw7jKGWvo",
-      authDomain: "n8nchat-c8fd0.firebaseapp.com",
-      projectId: "n8nchat-c8fd0",
-      storageBucket: "n8nchat-c8fd0.firebasestorage.app",
-      messagingSenderId: "947496552779",
-      appId: "1:947496552779:web:9fd84c3993b10a42ee40ce",
-      measurementId: "G-93QYDRYZPR"
-    });
-
-let app;
-let auth;
-
-try {
-  const firebaseConfig = JSON.parse(firebaseConfigString);
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-} catch (error) {
-  console.error("Error inicializando Firebase. Revisa tu configuración.", error);
-}
+// --- (Los íconos SVG de IconFiLoader y IconTbMessageChatbotFilled van aquí) ---
 
 const IconFiLoader = ({ className, ...props }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
@@ -62,7 +28,7 @@ const IconTbMessageChatbotFilled = ({ className, ...props }) => (
   </svg>
 );
 
-// --- Componente del Formulario de Autenticación ---
+// --- Componente del Formulario de Autenticación (Sin cambios de lógica) ---
 const AuthForm = ({
   isLoginView,
   setIsLoginView,
@@ -84,6 +50,7 @@ const AuthForm = ({
     }
   };
 
+  // ... (Todo el JSX de tu AuthForm va aquí, está perfecto) ...
   return (
     <div className="flex flex-col h-full">
       {/* Encabezado */}
@@ -159,22 +126,30 @@ const AuthForm = ({
   );
 };
 
-// Interfaz del Chat con tu lógica n8n 
+
+// --- Interfaz del Chat (Lógica Limpia de Supabase) ---
 const ChatInterface = ({ userEmail, onLogout, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
-  const [sessionId, setSessionId] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // webhook n8n 
-  async function sendMessageToN8n(message, sessionId) {
+  const { fetchCart } = useCart(); // 1. Obtenemos la función de refrescar el carro
+  const { session } = useAuth(); // 2. Obtenemos la sesión de Supabase (con el token)
+
+  // Webhook n8n 
+  async function sendMessageToN8n(message) {
     const webhookUrl = 'http://localhost:5678/webhook/80a5663d-7186-4f19-8b15-316f7aac4965';
-    const data = { text: message, sessionId: sessionId };
+    const data = { text: message }; // Ya no enviamos sessionId en el body
+    
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          // 3. Enviamos el Token de Supabase para autenticarnos
+          'Authorization': `Bearer ${session.access_token}` 
+        },
         body: JSON.stringify(data)
       });
       const result = await response.json();
@@ -185,14 +160,15 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     }
   }
 
-   useEffect(() => {
-    setSessionId(nanoid());
+  // Carga el mensaje inicial
+  useEffect(() => {
     setMessages([{
      sender: 'bot',
       text: '¡Hola! Soy Epybot. ¿Cómo puedo ayudarte?'
     }]);
   }, []);
 
+  // Scroll automático
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -204,15 +180,23 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     const currentInput = input;
     setInput('');
     setIsLoading(true);
-    // Llamada  función n8n
-    const botResponseText = await sendMessageToN8n(currentInput, sessionId);
+
+    // 4. Llama a n8n (ya no necesita pasar el sessionId)
+    const botResponseText = await sendMessageToN8n(currentInput);
+    
     setIsLoading(false);
     if (botResponseText) {
       const botMessage = { sender: 'bot', text: botResponseText };
       setMessages(prev => [...prev, botMessage]);
+      
+      // 5. El "Gatillo": Si el bot dice "carrito", refrescamos la Navbar
+      if (botResponseText.toLowerCase().includes("a tu carrito")) {
+        fetchCart(); // Ya no necesita sessionId, el Context lo sabe
+      }
     }
   };
 
+  // ... (Tus funciones handleKeyPress y handleFormSubmit son correctas) ...
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -224,9 +208,11 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     e.preventDefault();
     handleSendMessage();
   };
-// Encabezado del Chat 
+
+  // ... (Tu JSX de ChatInterface es correcto) ...
   return (
     <div className="flex flex-col h-full">
+      {/* Encabezado del Chat */}
       <div className="p-4 colores-epysa text-white rounded-t-2xl flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2 min-w-0">
           <TbMessageChatbotFilled className='w-8 h-8 flex-shrink-0'/>
@@ -293,33 +279,14 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
   );
 };
 
-// --- Componente Principal (App) ---
 
+// --- Componente Principal (Frontchatbot) ---
 export default function Frontchatbot({ iconClosed }) { 
   const [isOpen, setIsOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [authLoading, setAuthLoading] = useState(true); 
+  // 6. Usa el hook de Supabase Auth (ya no hay Firebase)
+  const { currentUser, signIn, signUp, signOut, loading: authLoading } = useAuth(); 
   const [authError, setAuthError] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
-
-  useEffect(() => {
-    if (!auth) {
-      setAuthLoading(false);
-      setAuthError("Error: Servicio de autenticación no disponible.");
-      return;
-    }
-    
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user); 
-      setAuthLoading(false); 
-      setAuthError(''); 
-      if (user) {
-        setIsLoginView(true); 
-      }
-    });
-    
-    return () => unsubscribe();
-  }, []);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
@@ -328,63 +295,28 @@ export default function Frontchatbot({ iconClosed }) {
     }
   };
 
+  // 7. Funciones de Login/Signup de Supabase
   const handleLogin = async (email, password) => {
-    if (!auth) return;
-    setAuthLoading(true);
     setAuthError('');
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      setAuthError(getFirebaseErrorMessage(error));
-    } finally {
-      setAuthLoading(false);
-    }
+    const { error } = await signIn(email, password);
+    if (error) setAuthError(error.message);
   };
 
   const handleSignUp = async (email, password) => {
-    if (!auth) return;
-    setAuthLoading(true);
     setAuthError('');
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      setAuthError(getFirebaseErrorMessage(error));
-    } finally {
-      setAuthLoading(false);
-    }
+    const { error } = await signUp(email, password);
+    if (error) setAuthError(error.message);
   };
-
+  
   const handleLogout = async () => {
-    if (!auth) return;
-    await signOut(auth);
+    await signOut();
   };
-
-  const getFirebaseErrorMessage = (error) => {
-    switch (error.code) {
-      case 'auth/invalid-email':
-        return 'El formato del correo es inválido.';
-      case 'auth/user-not-found':
-        return 'No se encontró un usuario con este correo.';
-      case 'auth/wrong-password':
-        return 'Contraseña incorrecta.';
-      case 'auth/email-already-in-use':
-        return 'Este correo ya está registrado.';
-      case 'auth/weak-password':
-        return 'La contraseña debe tener al menos 6 caracteres.';
-      case 'auth/operation-not-allowed':
-        return 'Inicio de sesión por correo y contraseña no habilitado.';
-      case 'auth/invalid-credential':
-          return 'Credenciales inválidas o caducadas.';
-      default:
-        console.error("Error de Firebase:", error);
-        return 'Ocurrió un error. Inténtalo de nuevo.';
-    }
-  };
-
+  
+  
+  
+  // ... (Tu JSX principal de Frontchatbot es correcto) ...
   return (
     <>
-    
-     
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans">
         
         {/* Ventana del Chat (Contenido dinámico) */}

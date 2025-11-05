@@ -1,7 +1,6 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from '../firebase';
+import { supabase } from '../supabaseClient'; // 1. Importa tu cliente
 
 const AuthContext = createContext();
 
@@ -11,19 +10,35 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
+    const [session, setSession] = useState(null); // Para guardar el token
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
+        // Obtiene la sesión la primera vez
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setCurrentUser(session?.user ?? null);
             setLoading(false);
         });
 
-        return unsubscribe;
+        // Escucha cambios en la autenticación (Login, Logout)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            (_event, session) => {
+                setSession(session);
+                setCurrentUser(session?.user ?? null);
+            }
+        );
+
+        return () => subscription.unsubscribe();
     }, []);
 
+    // Funciones que le pasamos al resto de la app
     const value = {
-        currentUser
+        currentUser,
+        session, 
+        signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
+        signOut: () => supabase.auth.signOut(),
+        signUp: (email, password) => supabase.auth.signUp({ email, password }) // <-- LÍNEA CORREGIDA
     };
 
     return (
