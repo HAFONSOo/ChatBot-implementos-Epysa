@@ -15,8 +15,8 @@
     "firebase": "^12.4.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-icons": "^5.5.0",
-    "react-routemr-do": "^7.9.4"
+  "react-icons": "^5.5.0",
+  "react-router-dom": "^6.14.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
