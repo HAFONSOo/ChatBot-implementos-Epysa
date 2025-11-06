@@ -1,0 +1,176 @@
+/* Contenedor genérico */
+.container {
+  width: min(1200px, 92%);
+  margin-inline: auto;
+}
+
+/* ===== HERO NEWSLETTER (compacto) ===== */
+.nl-hero {
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+  padding: 22px 0 26px;           /* ↓ más bajo que antes */
+}
+
+.nl-title {
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 22px;                /* ↓ más pequeño */
+  margin: 0 0 4px 0;
+}
+
+.nl-subtitle {
+  text-align: center;
+  opacity: 0.95;
+  margin: 0 0 8px 0;              /* ↓ menos espacio */
+  font-size: 12px;
+}
+
+/* ===== NEWSLETTER: Campo estilo captura ===== */
+.nl-form {
+  margin: 8px auto 6px;           /* ↓ menos margen */
+  max-width: 720px;
+  padding: 0 12px;
+}
+
+.nl-field { position: relative; }
+
+.nl-input {
+  width: 100%;
+  height: 36px;                   /* ↓ más delgado */
+  border: none;
+  outline: none;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #222;
+  padding: 0 126px 0 14px;        /* ajustado al botón más pequeño */
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+/* Botón ovalado “flotando” a la derecha */
+.nl-btn {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  border: none;
+  height: 30px;                   /* ↓ */
+  padding: 0 14px;                /* ↓ */
+  border-radius: 9999px;
+  background: #5a4a3f;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: .3px;
+  font-size: 12.5px;              /* ↓ */
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,.18);
+  transition: filter .15s ease, transform .05s ease;
+}
+.nl-btn:hover { filter: brightness(1.06); }
+.nl-btn:active { transform: translateY(-50%) scale(.98); }
+
+/* Términos */
+.nl-terms {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-start;
+  font-size: 12px;                /* ↓ */
+  margin-left: calc(12px + 0.25rem);
+  margin-top: 4px;                /* ↓ */
+}
+.nl-terms input { accent-color: #2e6aa7; }
+.nl-terms-link { color: #fff; text-decoration: underline; }
+
+/* Responsive newsletter */
+@media (max-width: 560px) {
+  .nl-input { padding-right: 112px; height: 34px; }
+  .nl-btn { right: 8px; height: 28px; padding: 0 12px; }
+}
+
+/* ===== FOOTER (compacto) ===== */
+.site-footer {
+  background: #2b2b2b;
+  color: #eaeaea;
+  padding-top: 18px;              /* ↓ */
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;                      /* ↓ */
+  padding-bottom: 12px;           /* ↓ */
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.footer-col h4 {
+  margin: 0 0 6px;
+  font-size: 14px;                /* ↓ */
+  font-weight: 800;
+}
+.footer-col h5 {
+  margin: 10px 0 6px;
+  font-size: 13px;                /* ↓ */
+  font-weight: 700;
+}
+.footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.footer-col li { margin: 4px 0; } /* ↓ */
+.footer-col a {
+  color: #eaeaea;
+  text-decoration: none;
+  opacity: .9;
+  font-size: 13px;                /* ↓ */
+}
+.footer-col a:hover { opacity: 1; text-decoration: underline; }
+
+.social {
+  display: flex;
+  gap: 8px;                       /* ↓ */
+  font-size: 18px;                /* ↓ */
+}
+.social a { color: #fff; opacity: .9; }
+.social a:hover { opacity: 1; }
+
+.contact-item {
+  display: flex;
+  gap: 10px;
+  margin: 8px 0;                  /* ↓ */
+  align-items: flex-start;
+}
+.contact-item svg { flex: 0 0 18px; font-size: 18px; margin-top: 1px; } /* ↓ */
+
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.6);
+  padding: 4px 10px;              /* ↓ */
+  border-radius: 12px;            /* ↓ */
+  color: #fff;
+  text-decoration: none;
+  margin-top: 6px;                /* ↓ */
+  font-size: 12.5px;              /* ↓ */
+}
+.contact-btn:hover { background: rgba(255,255,255,.08); }
+
+.footer-bottom {
+  text-align: center;
+  font-size: 11px;                /* ↓ */
+  opacity: .9;
+  padding: 10px 0 14px;           /* ↓ */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 14px; }
+}
+@media (max-width: 560px) {
+  .nl-form { flex-direction: column; }
+  .footer-grid { grid-template-columns: 1fr; }
+}

@@ -1,9 +1,16 @@
 import React from 'react'
-import Chatbot from './Chatbot'
+import Carrusel from './Carrusel.jsx'
+import SeccionInferior from './SeccionInferior.jsx'
+import Body from './Body.jsx'
+import Footer from './Footer.jsx'
 
- function Home() {
+export default function Home() {
   return (
-    <div><Chatbot/></div>
+    <>
+      <Carrusel/>
+      <SeccionInferior/>
+      <Body/>
+      <Footer/>
+    </>
   )
 }
-export default Home
