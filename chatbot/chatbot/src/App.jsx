@@ -5,13 +5,13 @@ import Home from './components/Home.jsx';
 import Navbar from './components/Navbar.jsx';
 import Frontchatbot from './components/Receptor.jsx';
 import Carrusel from './components/Carrusel.jsx';
-
+import CartModal from './components/CartModal.jsx';
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Frontchatbot />
-   
+      <CartModal />
       
 
       <Routes>

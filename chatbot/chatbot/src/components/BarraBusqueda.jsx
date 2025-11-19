@@ -32,7 +32,7 @@ export default function SearchBar() {
           placeholder="¿Qué buscas?" 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className='w-full p-3 pr-10 rounded-full bg-white text-gray-800 border-2 border-transparent 
+          className='md:w-full w-50 p-3 pr-10 rounded-full bg-white text-gray-800 border-2 border-transparent 
                      focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-300
                      transition-all duration-300 ease-in-out' // 5. Estilos mejorados
         />

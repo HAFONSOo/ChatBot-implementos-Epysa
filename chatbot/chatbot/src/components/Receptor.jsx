@@ -4,11 +4,10 @@ import { FiX, FiSend, FiUser, FiLock, FiLogIn } from 'react-icons/fi';
 import { TbMessageChatbotFilled } from "react-icons/tb";
 import { MdClose } from "react-icons/md";
 import { PiSignOutBold } from "react-icons/pi";
-import { useCart } from "../context/CartContext"; // Importa el Context del Carro
-import { useAuth } from "../context/AuthContext"; // Importa el Context de Autenticación
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
-// --- (Los íconos SVG de IconFiLoader y IconTbMessageChatbotFilled van aquí) ---
-
+// --- Iconos SVG ---
 const IconFiLoader = ({ className, ...props }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
     <line x1="12" y1="2" x2="12" y2="6"></line>
@@ -22,22 +21,8 @@ const IconFiLoader = ({ className, ...props }) => (
   </svg>
 );
 
-const IconTbMessageChatbotFilled = ({ className, ...props }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
-    <path d="M21 15a2 2 0 0 1-2 2H7.66l-3.32 2.9A1 1 0 0 1 3 21.12V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10ZM8 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"></path>
-  </svg>
-);
-
-// --- Componente del Formulario de Autenticación (Sin cambios de lógica) ---
-const AuthForm = ({
-  isLoginView,
-  setIsLoginView,
-  onLogin,
-  onSignUp,
-  authLoading,
-  authError,
-  onClose
-}) => {
+// --- Componente AuthForm ---
+const AuthForm = ({ isLoginView, setIsLoginView, onLogin, onSignUp, authLoading, authError, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -50,10 +35,8 @@ const AuthForm = ({
     }
   };
 
-  // ... (Todo el JSX de tu AuthForm va aquí, está perfecto) ...
   return (
     <div className="flex flex-col h-full">
-      {/* Encabezado */}
       <div className="p-4 colores-epysa text-white rounded-t-2xl flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2">
           <TbMessageChatbotFilled className='w-8 h-8'/>
@@ -67,7 +50,6 @@ const AuthForm = ({
         </button>
       </div>
 
-      {/* Área del Formulario */}
       <form onSubmit={handleSubmit} className="flex-1 p-6 space-y-4 overflow-y-auto bg-gray-50">
         <div className="relative">
           <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -112,7 +94,6 @@ const AuthForm = ({
         </button>
       </form>
 
-      {/* Pie de página para cambiar de vista */}
       <div className="p-4 border-t bg-gray-50 rounded-b-2xl">
         <button
           onClick={() => setIsLoginView(!isLoginView)}
@@ -126,28 +107,26 @@ const AuthForm = ({
   );
 };
 
-
-// --- Interfaz del Chat (Lógica Limpia de Supabase) ---
+// --- Interfaz del Chat ---
 const ChatInterface = ({ userEmail, onLogout, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const { fetchCart } = useCart(); // 1. Obtenemos la función de refrescar el carro
-  const { session } = useAuth(); // 2. Obtenemos la sesión de Supabase (con el token)
+  const { fetchCart } = useCart(); 
+  const { session } = useAuth();
 
   // Webhook n8n 
   async function sendMessageToN8n(message) {
     const webhookUrl = 'http://localhost:5678/webhook/80a5663d-7186-4f19-8b15-316f7aac4965';
-    const data = { text: message }; // Ya no enviamos sessionId en el body
+    const data = { text: message };
     
     try {
       const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          // 3. Enviamos el Token de Supabase para autenticarnos
           'Authorization': `Bearer ${session.access_token}` 
         },
         body: JSON.stringify(data)
@@ -160,7 +139,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     }
   }
 
-  // Carga el mensaje inicial
   useEffect(() => {
     setMessages([{
      sender: 'bot',
@@ -168,7 +146,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     }]);
   }, []);
 
-  // Scroll automático
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -181,7 +158,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     setInput('');
     setIsLoading(true);
 
-    // 4. Llama a n8n (ya no necesita pasar el sessionId)
     const botResponseText = await sendMessageToN8n(currentInput);
     
     setIsLoading(false);
@@ -189,14 +165,17 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
       const botMessage = { sender: 'bot', text: botResponseText };
       setMessages(prev => [...prev, botMessage]);
       
-      // 5. El "Gatillo": Si el bot dice "carrito", refrescamos la Navbar
-      if (botResponseText.toLowerCase().includes("a tu carrito")) {
-        fetchCart(); // Ya no necesita sessionId, el Context lo sabe
+      const respuesta = botResponseText.toLowerCase();
+      if (respuesta.includes("carrito") || 
+          respuesta.includes("agregado") || 
+          respuesta.includes("listo") ||
+          respuesta.includes("eliminado") || 
+          respuesta.includes("actualizado")) {
+        fetchCart(); 
       }
     }
   };
 
-  // ... (Tus funciones handleKeyPress y handleFormSubmit son correctas) ...
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -209,10 +188,8 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     handleSendMessage();
   };
 
-  // ... (Tu JSX de ChatInterface es correcto) ...
   return (
     <div className="flex flex-col h-full">
-      {/* Encabezado del Chat */}
       <div className="p-4 colores-epysa text-white rounded-t-2xl flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2 min-w-0">
           <TbMessageChatbotFilled className='w-8 h-8 flex-shrink-0'/>
@@ -231,7 +208,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
         </div>
       </div>
 
-      {/* Área de Mensajes */}
       <div className="flex-1 p-2 sm:p-6 space-y-4 overflow-y-auto bg-gray-50">
         {messages.map((msg, index) => (
           <div key={index} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -254,7 +230,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Área de Entrada de Texto */}
       <form onSubmit={handleFormSubmit} className="p-3 border-t bg-gray-100 rounded-b-2xl">
         <div className="flex items-center space-x-3">
           <input
@@ -279,11 +254,9 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
   );
 };
 
-
-// --- Componente Principal (Frontchatbot) ---
+// --- Componente Principal ---
 export default function Frontchatbot({ iconClosed }) { 
   const [isOpen, setIsOpen] = useState(false);
-  // 6. Usa el hook de Supabase Auth (ya no hay Firebase)
   const { currentUser, signIn, signUp, signOut, loading: authLoading } = useAuth(); 
   const [authError, setAuthError] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
@@ -295,7 +268,6 @@ export default function Frontchatbot({ iconClosed }) {
     }
   };
 
-  // 7. Funciones de Login/Signup de Supabase
   const handleLogin = async (email, password) => {
     setAuthError('');
     const { error } = await signIn(email, password);
@@ -312,21 +284,11 @@ export default function Frontchatbot({ iconClosed }) {
     await signOut();
   };
   
-  
-  
-  // ... (Tu JSX principal de Frontchatbot es correcto) ...
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans">
         
-        {/* Ventana del Chat (Contenido dinámico) */}
-        <div
-          className={`
-            w-80 sm:w-96 h-[500px] max-h-[70vh] mb-4 bg-white rounded-2xl shadow-2xl
-            flex flex-col transition-all duration-300 ease-in-out
-            ${isOpen ? 'translate-x-0' : 'hidden translate-x-1000 pointer-events-none'}
-          `}
-        >
+        <div className={`w-80 sm:w-96 h-[500px] max-h-[70vh] mb-4 bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'hidden translate-x-1000 pointer-events-none'}`}>
           {authLoading ? (
             <div className="flex items-center justify-center h-full">
               <IconFiLoader className="animate-spin w-12 h-12 text-blue-600" />
@@ -350,7 +312,6 @@ export default function Frontchatbot({ iconClosed }) {
           )}
         </div>
           
-        {/* Botón Flotante principal  */}
         <button
           onClick={toggleChat}
           className="bg-blue-600 hover:bg-slate-700 text-white w-16 h-16 rounded-full shadow-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-transform transform hover:scale-110"
@@ -360,7 +321,7 @@ export default function Frontchatbot({ iconClosed }) {
             {!isOpen && iconClosed}
             <TbMessageChatbotFilled className='w-8 h-8'/>
           </div>
-          <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-1className scale-100' : 'opacity-0 scale-90'}`}>
+          <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
             {isOpen && <FiX size={32} />}
           </div>
         </button>
