@@ -6,6 +6,8 @@ import { MdClose } from "react-icons/md";
 import { PiSignOutBold } from "react-icons/pi";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 // --- Iconos SVG ---
 const IconFiLoader = ({ className, ...props }) => (
@@ -21,8 +23,22 @@ const IconFiLoader = ({ className, ...props }) => (
   </svg>
 );
 
+const IconTbMessageChatbotFilled = ({ className, ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
+    <path d="M21 15a2 2 0 0 1-2 2H7.66l-3.32 2.9A1 1 0 0 1 3 21.12V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10ZM8 9.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Zm4 0a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z"></path>
+  </svg>
+);
+
 // --- Componente AuthForm ---
-const AuthForm = ({ isLoginView, setIsLoginView, onLogin, onSignUp, authLoading, authError, onClose }) => {
+const AuthForm = ({
+  isLoginView,
+  setIsLoginView,
+  onLogin,
+  onSignUp,
+  authLoading,
+  authError,
+  onClose
+}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -142,7 +158,13 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
   useEffect(() => {
     setMessages([{
      sender: 'bot',
-      text: '¡Hola! Soy Epybot. ¿Cómo puedo ayudarte?'
+     text: `¡Hola! Soy Epybot. ¿Cómo puedo ayudarte hoy?
+
+     
+       1.Estado de tu pedido
+       2.Resolver algun problema con tu compra
+       3.Consultar productos en oferta
+       4.Agregar implementos a tu carrito`
     }]);
   }, []);
 
@@ -190,6 +212,7 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Encabezado */}
       <div className="p-4 colores-epysa text-white rounded-t-2xl flex items-center justify-between shadow-md">
         <div className="flex items-center gap-2 min-w-0">
           <TbMessageChatbotFilled className='w-8 h-8 flex-shrink-0'/>
@@ -208,11 +231,29 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
         </div>
       </div>
 
+      {/* Mensajes */}
       <div className="flex-1 p-2 sm:p-6 space-y-4 overflow-y-auto bg-gray-50">
         {messages.map((msg, index) => (
           <div key={index} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div className={`max-w-xs md:max-w-md p-3 rounded-2xl shadow ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}`}>
-              <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+              
+              {/* AQUÍ ESTABA TU ERROR: ReactMarkdown usado correctamente dentro del div */}
+              <div className="text-sm prose prose-sm max-w-none">
+                <ReactMarkdown 
+                  remarkPlugins={[remarkGfm]}
+                  components={{
+                    ul: ({node, ...props}) => <ul className="list-disc pl-4 my-1" {...props} />,
+                    ol: ({node, ...props}) => <ol className="list-decimal pl-4 my-1" {...props} />,
+                    li: ({node, ...props}) => <li className="mb-0.5" {...props} />,
+                    p: ({node, ...props}) => <p className="mb-1 last:mb-0" {...props} />,
+                    strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
+                    a: ({node, ...props}) => <a className="underline text-blue-600 hover:text-blue-800" {...props} />
+                  }}
+                >
+                  {msg.text}
+                </ReactMarkdown>
+              </div>
+
             </div>
           </div>
         ))}
@@ -230,6 +271,7 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Input */}
       <form onSubmit={handleFormSubmit} className="p-3 border-t bg-gray-100 rounded-b-2xl">
         <div className="flex items-center space-x-3">
           <input
@@ -287,7 +329,6 @@ export default function Frontchatbot({ iconClosed }) {
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans">
-        
         <div className={`w-80 sm:w-96 h-[500px] max-h-[70vh] mb-4 bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'hidden translate-x-1000 pointer-events-none'}`}>
           {authLoading ? (
             <div className="flex items-center justify-center h-full">
