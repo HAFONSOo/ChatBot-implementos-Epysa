@@ -137,7 +137,7 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
 
   // Webhook n8n 
   async function sendMessageToN8n(message) {
-    const webhookUrl = 'http://localhost:5678/webhook/80a5663d-7186-4f19-8b15-316f7aac4965';
+    const webhookUrl = 'https://primary-production-7e56.up.railway.app/webhook-test/80a5663d-7186-4f19-8b15-316f7aac4965';
     const data = { text: message };
     
     try {
