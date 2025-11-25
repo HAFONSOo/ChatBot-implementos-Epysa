@@ -8,7 +8,9 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
+// Cambia la URL fija por esto:
+const n8nUrl = import.meta.env.VITE_N8N_URL;
+const webhookUrl = `${n8nUrl}/webhook/80a5663d-7186-4f19-8b15-316f7aac4965`;
 // --- Iconos SVG ---
 const IconFiLoader = ({ className, ...props }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
