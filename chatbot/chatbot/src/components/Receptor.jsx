@@ -8,6 +8,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
 // Cambia la URL fija por esto:
 const n8nUrl = import.meta.env.VITE_N8N_URL;
 
@@ -157,16 +158,16 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     }
   }
 
+  // --- CORRECCIÓN AQUÍ: Eliminada la indentación en el string ---
   useEffect(() => {
     setMessages([{
      sender: 'bot',
      text: `¡Hola! Soy Epybot. ¿Cómo puedo ayudarte hoy?
 
-     
-       1.Estado de tu pedido
-       2.Resolver algun problema con tu compra
-       3.Consultar productos en oferta
-       4.Agregar implementos a tu carrito`
+    1. Estado de tu pedido
+    2. Resolver algun problema con tu compra
+    3. Consultar productos en oferta
+    4. Agregar implementos a tu carrito`
     }]);
   }, []);
 
@@ -237,9 +238,13 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
       <div className="flex-1 p-2 sm:p-6 space-y-4 overflow-y-auto bg-gray-50">
         {messages.map((msg, index) => (
           <div key={index} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-xs md:max-w-md p-3 rounded-2xl shadow ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}`}>
+            
+            {/* --- CORRECCIÓN AQUÍ: max-w-[85%] para evitar desbordes y break-words --- */}
+            <div className={`
+                max-w-[85%] sm:max-w-md p-3 rounded-2xl shadow break-words
+                ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}
+            `}>
               
-              {/* AQUÍ ESTABA TU ERROR: ReactMarkdown usado correctamente dentro del div */}
               <div className="text-sm prose prose-sm max-w-none">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
@@ -249,7 +254,10 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
                     li: ({node, ...props}) => <li className="mb-0.5" {...props} />,
                     p: ({node, ...props}) => <p className="mb-1 last:mb-0" {...props} />,
                     strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
-                    a: ({node, ...props}) => <a className="underline text-blue-600 hover:text-blue-800" {...props} />
+                    a: ({node, ...props}) => <a className="underline text-blue-600 hover:text-blue-800" {...props} />,
+                    // Forzamos el estilo de pre y code por si acaso llega algo como código
+                    pre: ({node, ...props}) => <pre className="whitespace-pre-wrap break-all" {...props} />,
+                    code: ({node, ...props}) => <code className="break-all" {...props} />
                   }}
                 >
                   {msg.text}
@@ -331,7 +339,15 @@ export default function Frontchatbot({ iconClosed }) {
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans">
-        <div className={`w-80 sm:w-96 h-[500px] max-h-[70vh] mb-4 bg-white rounded-2xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0' : 'hidden translate-x-1000 pointer-events-none'}`}>
+        {/* Contenedor del chat ajustado */}
+        <div className={`
+            w-[calc(100vw-32px)] sm:w-96 
+            h-[80vh] sm:h-[500px] 
+            mb-4 bg-white rounded-2xl shadow-2xl flex flex-col 
+            transition-all duration-300 ease-in-out 
+            origin-bottom-right
+            ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 hidden pointer-events-none'}
+        `}>
           {authLoading ? (
             <div className="flex items-center justify-center h-full">
               <IconFiLoader className="animate-spin w-12 h-12 text-blue-600" />
@@ -357,15 +373,15 @@ export default function Frontchatbot({ iconClosed }) {
           
         <button
           onClick={toggleChat}
-          className="bg-blue-600 hover:bg-slate-700 text-white w-16 h-16 rounded-full shadow-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-transform transform hover:scale-110"
+          className="bg-blue-600 hover:bg-slate-700 text-white w-14 h-14 sm:w-16 sm:h-16 rounded-full shadow-xl flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-400 transition-transform transform hover:scale-110 active:scale-95"
           aria-label="Toggle Chatbot"
         >
           <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-0 scale-90' : 'opacity-100 scale-100'}`}>
             {!isOpen && iconClosed}
-            <TbMessageChatbotFilled className='w-8 h-8'/>
+            <TbMessageChatbotFilled className='w-6 h-6 sm:w-8 sm:h-8'/>
           </div>
           <div className={`transition-opacity duration-300 absolute ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
-            {isOpen && <FiX size={32} />}
+            {isOpen && <FiX size={28} className="sm:w-8 sm:h-8" />}
           </div>
         </button>
       </div>

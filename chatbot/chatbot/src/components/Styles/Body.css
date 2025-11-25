@@ -1,6 +1,7 @@
 /* ===== Contenedor general ===== */
 .body-wrap {
   padding: 0 16px;
+  overflow-x: hidden; /* Evita scroll horizontal indeseado en la página */
 }
 
 /* ===== Tabs ===== */
@@ -10,7 +11,13 @@
   align-items: center;
   border-bottom: 1px solid #e7edf7;
   margin: 8px 0 16px;
+  /* Habilita scroll horizontal en móvil si hay muchos tabs */
+  overflow-x: auto; 
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+  padding-bottom: 5px; /* Espacio para la barra de scroll */
 }
+
 .tab {
   border: 0;
   padding: 10px 0;
@@ -19,12 +26,13 @@
   font-weight: 700;
   cursor: pointer;
   position: relative;
+  flex-shrink: 0; /* Evita que los tabs se aplasten */
 }
 .tab.active { color: #0b63c7; }
 .tab.active::after {
   content: "";
   position: absolute;
-  left: 0; right: 0; bottom: -1px;
+  left: 0; right: 0; bottom: -1px; /* Ajustado por el padding-bottom */
   height: 3px;
   background: #0b63c7;
   border-radius: 3px;
@@ -37,14 +45,24 @@
 }
 .shelf-grid {
   display: grid;
-  grid-template-columns: 1.35fr 1fr 1fr; /* imagen grande + 2 columnas de cards */
+  /* En móvil: 1 columna. En desktop: tu diseño original */
+  grid-template-columns: 1fr; 
   gap: 20px;
 }
+
+/* Media Query para Desktop */
+@media (min-width: 1024px) {
+  .shelf-grid {
+    grid-template-columns: 1.35fr 1fr 1fr;
+  }
+}
+
 .hero {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid #e7edf7;
   background: #f7f9fc;
+  min-height: 200px; /* Altura mínima para que no desaparezca si no carga img */
 }
 .hero img {
   width: 100%; height: 100%;
@@ -52,30 +70,45 @@
 }
 
 /* Cards de producto */
-.cards { display: grid; grid-template-columns: 1fr; gap: 20px; }
+.cards { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; /* 2 columnas en móvil para productos */
+  gap: 10px; 
+}
+@media (min-width: 768px) {
+    .cards { gap: 20px; grid-template-columns: 1fr; } /* En desktop vuelven a apilarse según tu grid original */
+}
 
 .card {
   background: #fff;
   border-radius: 14px;
-  padding: 16px;
+  padding: 10px;
   border: 1px solid #e7edf7;
   display: flex; flex-direction: column; gap: 10px;
 }
-.card-img { display: grid; place-items: center; height: 120px; }
-.card-img img { max-height: 110px; object-fit: contain; }
-.card-meta .brand { font-size: 12px; font-weight: 800; color: #0b63c7; }
-.card-meta .name { font-size: 12px; color: #5e6b7c; line-height: 1.2; margin-top: 2px; }
-.price { font-weight: 800; color: #0b63c7; margin-top: 4px; }
-.price .iva { font-size: 10px; color: #7b8a9b; vertical-align: super; }
+.card-img { display: grid; place-items: center; height: 100px; }
+@media (min-width: 768px) { .card-img { height: 120px; } }
+
+.card-img img { max-height: 100%; object-fit: contain; }
+.card-meta .brand { font-size: 11px; font-weight: 800; color: #0b63c7; }
+.card-meta .name { font-size: 11px; color: #5e6b7c; line-height: 1.2; margin-top: 2px; }
+@media (min-width: 768px) { 
+    .card-meta .brand { font-size: 12px; }
+    .card-meta .name { font-size: 12px; }
+}
+
+.price { font-weight: 800; color: #0b63c7; margin-top: 4px; font-size: 14px; }
+.price .iva { font-size: 9px; color: #7b8a9b; vertical-align: super; }
 
 .btn-primary {
   background: #0b63c7;
   color: #fff;
   border: 0;
   border-radius: 22px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-weight: 800;
   cursor: pointer;
+  font-size: 12px;
 }
 
 /* Tira promocional (banner) */
@@ -86,30 +119,41 @@
   overflow: hidden;
   border: 1px solid #e7edf7;
 }
-.promo-strip img { width: 100%; display: block; }
+.promo-strip img { width: 100%; display: block; min-height: 80px; object-fit: cover; }
 .promo-strip .promo-cta {
-  position: absolute; right: 16px; bottom: 10px;
-  background: #0b63c7; color: #fff; padding: 6px 12px;
+  position: absolute; right: 10px; bottom: 8px;
+  background: #0b63c7; color: #fff; padding: 4px 10px;
   border-radius: 16px; font-weight: 800; text-decoration: none;
+  font-size: 10px;
+}
+@media (min-width: 768px) {
+    .promo-strip .promo-cta { padding: 6px 12px; font-size: 12px; right: 16px; bottom: 10px;}
 }
 
-/* ===== Grid categorías (“No te lo puedes perder”) ===== */
+/* ===== Grid categorías ===== */
 .cat-grid {
   max-width: 1200px;
   margin: 22px auto;
   text-align: center;
 }
 .sec-title {
-  font-weight: 800; font-size: 24px;
+  font-weight: 800; font-size: 20px;
   color: #2663aa; margin: 8px 0 6px;
 }
-.sec-subtitle { color: #6f7f92; margin-bottom: 16px; }
+@media (min-width: 768px) { .sec-title { font-size: 24px; } }
+
+.sec-subtitle { color: #6f7f92; margin-bottom: 16px; font-size: 14px; }
 
 .cat-grid .grid {
   display: grid; gap: 12px;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 150px;
+  /* Móvil: 2 columnas. Tablet/Desktop: 4 columnas */
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 120px;
 }
+@media (min-width: 768px) {
+    .cat-grid .grid { grid-template-columns: repeat(4, 1fr); grid-auto-rows: 150px; }
+}
+
 .tile {
   position: relative; display: block;
   border-radius: 10px; overflow: hidden;
@@ -128,7 +172,11 @@
   position: absolute; left: 10px; bottom: 10px;
   color: #fff; font-weight: 800;
   text-shadow: 0 2px 6px rgba(0,0,0,.35);
+  font-size: 12px;
+  text-align: left;
 }
+
+/* El elemento grande ocupa 2 columnas siempre, pero en móvil ocupa toda la fila si quieres */
 .size-l { grid-column: span 2; grid-row: span 2; }
 
 /* ===== Carrusel “Otras personas han comprado esto” ===== */
@@ -137,88 +185,71 @@
 .recs-rail {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(240px, 1fr);
+  grid-auto-columns: minmax(160px, 1fr); /* Más estrecho en móvil */
   gap: 14px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding: 2px 6px;
+}
+@media (min-width: 768px) {
+    .recs-rail { grid-auto-columns: minmax(240px, 1fr); }
 }
 .recs-item { scroll-snap-align: start; }
 
 .rail-nav {
   position: absolute; top: 38%;
   transform: translateY(-50%);
-  width: 36px; height: 36px; border-radius: 50%;
+  width: 30px; height: 30px; border-radius: 50%;
   border: 0; cursor: pointer;
   background: #0b63c7; color: #fff;
   display: grid; place-items: center;
   box-shadow: 0 6px 16px rgba(11,99,199,.35);
+  z-index: 2;
 }
-.rail-nav.left { left: -10px; }
-.rail-nav.right { right: -10px; }
+@media (min-width: 768px) { .rail-nav { width: 36px; height: 36px; } }
+.rail-nav.left { left: 0px; }
+.rail-nav.right { right: 0px; }
 
 /* ===== Blog ===== */
 .blog { max-width: 1200px; margin: 28px auto; }
 .blog-grid {
-  display: grid; grid-template-columns: 1.1fr 1fr;
+  display: grid; grid-template-columns: 1fr;
   gap: 18px; align-items: start;
 }
+@media (min-width: 900px) {
+    .blog-grid { grid-template-columns: 1.1fr 1fr; }
+}
+
 .blog-img {
   border-radius: 12px; overflow: hidden;
   border: 1px solid #e7edf7;
+  height: 200px; /* Altura fija en móvil */
 }
+@media (min-width: 768px) { .blog-img { height: auto; } }
 .blog-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-.blog-list { padding-top: 8px; }
-.blog-title { color: #2b6db4; font-weight: 800; margin: 0; }
-.blog-subtitle { color: #5d6a7a; margin: 2px 0 8px; }
-
-.blog-item {
-  border-bottom: 1px solid #e9eef6;
-  padding: 10px 0;
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 10px;
-}
-.blog-item a {
-  text-decoration: none; color: inherit;
-  display: flex; flex-direction: column;
-}
-.blog-item-title { font-weight: 700; color: #1f2f44; }
-.blog-item-desc { color: #6b7a8a; font-size: 12px; }
-.btn-outline {
-  border: 1px solid #2b6db4; background: transparent;
-  color: #2b6db4; padding: 6px 10px;
-  border-radius: 14px; font-weight: 700;
-}
 
 /* ===== Marcas ===== */
 .brands { max-width: 1200px; margin: 10px auto 34px; text-align: center; }
 .logo-row {
-  display: flex; gap: 22px; justify-content: center;
+  display: flex; gap: 15px; justify-content: center;
   flex-wrap: wrap; margin: 10px 0 8px;
 }
-.logo-row img { height: 28px; filter: saturate(.8); }
+.logo-row img { height: 20px; filter: saturate(.8); }
+@media (min-width: 768px) { .logo-row img { height: 28px; } }
 
 .feature-row {
-  display: flex; gap: 20px; justify-content: center;
+  display: flex; gap: 10px; justify-content: center;
   flex-wrap: wrap; margin-top: 10px;
 }
 .feature {
-  display: flex; gap: 10px; align-items: center;
-  border: 1px solid #e7edf7; padding: 8px 12px;
+  display: flex; gap: 8px; align-items: center;
+  border: 1px solid #e7edf7; padding: 6px 10px;
   border-radius: 12px; background: #fff;
+  width: 100%; /* Full width en móvil pequeño */
+  max-width: 300px;
 }
-.feature img { width: 38px; height: 38px; object-fit: contain; }
-.feature-tt { font-weight: 800; color: #2b6db4; line-height: 1; }
-.feature-st { color: #5b6a7b; font-size: 12px; margin-top: 2px; }
+@media (min-width: 600px) { .feature { width: auto; } }
 
-/* ===== Responsive ===== */
-@media (max-width: 1020px) {
-  .shelf-grid { grid-template-columns: 1fr; }
-  .cards { grid-template-columns: 1fr 1fr; }
-}
-@media (max-width: 680px) {
-  .cards { grid-template-columns: 1fr; }
-  .cat-grid .grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 140px; }
-  .blog-grid { grid-template-columns: 1fr; }
-}
+.feature img { width: 30px; height: 30px; object-fit: contain; }
+.feature-tt { font-weight: 800; color: #2b6db4; line-height: 1; font-size: 14px; }
+.feature-st { color: #5b6a7b; font-size: 11px; margin-top: 2px; }

@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
-// Define el componente
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
+
 function Carrusel() {
-  
-  // 1. Array de Slides
   const slides = [
     { url: 'https://images.implementos.cl/uploads/cms/slides/1760966402159.jpg' },
     { url: 'https://images.implementos.cl/uploads/cms/slides/1760733740043.jpg' },
@@ -15,86 +12,64 @@ function Carrusel() {
     { url: 'https://images.implementos.cl/uploads/cms/slides/1760536110884.jpg' },
   ];
 
-  // 2. Estado
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // 3. Efecto para el carrusel automático
   useEffect(() => {
     const timer = setInterval(() => {
-      // Usa la forma de callback para evitar dependencias
       setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-    }, 10000); // 10 segundos
-
+    }, 10000);
     return () => clearInterval(timer);
-  }, [slides.length]); // Depende solo de slides.length
+  }, [slides.length]);
 
-  // 4. Funciones de navegación
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
   };
-
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
   };
-
-  // 5. Función para los puntos
   const goToSlide = (slideIndex) => {
     setCurrentIndex(slideIndex);
   };
 
-  // 6. JSX
   return (
-    // Contenedor principal
-    <div className="w-full">
-      {/* Contenedor de la imagen: 'relative' para que los botones se posicionen sobre él */}
-      <div className="relative w-full h-[500px] ">
+    <div className="w-full group"> {/* group para hover effects si quieres */}
+      {/* Altura responsiva: h-48 (móvil), md:h-80 (tablet), lg:h-[500px] (desktop) */}
+      <div className="relative w-full h-48 sm:h-80 lg:h-[500px]">
         
-        {/* Contenedor de la imagen (un solo div) */}
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
           className="w-full h-full bg-center bg-cover duration-500"
+        ></div>
+
+        {/* Botones */}
+        <button
+          onClick={goToPrevious}
+          className="absolute top-1/2 left-2 md:left-5 transform -translate-y-1/2 text-white p-1 md:p-2 rounded-full bg-black/30 hover:bg-black/50 focus:outline-none cursor-pointer"
         >
+          <IoIosArrowBack size={24}/>
+        </button>
+
+        <button
+          onClick={goToNext}
+          className="absolute top-1/2 right-2 md:right-5 transform -translate-y-1/2 text-white p-1 md:p-2 rounded-full bg-black/30 hover:bg-black/50 focus:outline-none cursor-pointer"
+        >
+         <IoIosArrowForward size={24}/>
+        </button>
       </div>
 
-      {/* Botones de flechas (deben ser hijos directos del 'relative') */}
-      {/* Botón Izquierdo */}
-      <button
-        onClick={goToPrevious}
-        className="absolute top-1/2 left-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-1xl cursor-pointer"
-      >
-        <IoIosArrowBack/>
-      </button>
-
-      {/* Botón derecho */}
-      <button
-        onClick={goToNext}
-        className="absolute top-1/2 right-5 transform -translate-y-1/2 text-white p-2 rounded-full bg-black/50 focus:outline-none text-1xl cursor-pointer"
-      >
-       <IoIosArrowForward/>
-      </button>
-
-      </div>
-
-      {/* Puntos de navegación (FUERA del div 'relative') */}
-      <div className='w-full flex justify-center py-2'>
-        {slides.map(( slideIndex) => (
+      <div className='w-full flex justify-center py-2 gap-2'>
+        {slides.map((_, slideIndex) => (
           <div
             key={slideIndex}
             onClick={() => goToSlide(slideIndex)}
-            className='text-2xl cursor-pointer  '
-          >
-            {/* Puntos creados con divs */}
-            {currentIndex === slideIndex ? (
-              <div className='w-2 h-2 rounded-full colores-epysa mx-1 hover:bg-gray-600'></div>
-            ) : (
-              <div className='w-2 h-2 rounded-full bg-blue-600 mx-1 hover:bg-gray-600'></div>
-            )}
-          </div>
+            className={`cursor-pointer w-2 h-2 rounded-full transition-all duration-300 ${
+                currentIndex === slideIndex ? 'bg-orange-500 w-4' : 'bg-gray-400'
+            }`}
+          ></div>
         ))}
       </div>
     </div>
   );
 };
 
-// Exporta el componente
 export default Carrusel;
