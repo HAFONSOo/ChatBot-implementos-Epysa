@@ -6,10 +6,17 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import BarraBusqueda from "./BarraBusqueda";
 import { useCart } from "../context/CartContext";
 
+/**
+ * Navbar: Barra de navegación principal que incluye logo, buscador, iconos y
+ * el acceso rápido al carrito. Controla el estado del menú en móvil.
+ */
 export default function Navbar() {
     const { cartItems, toggleCart } = useCart();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
+    /**
+     * totalItems: cálculo del número total de unidades en el carrito (suma de `cantidad`).
+     */
     const totalItems = cartItems.reduce((total, item) => total + (Number(item.cantidad) || 0), 0); 
 
   return (

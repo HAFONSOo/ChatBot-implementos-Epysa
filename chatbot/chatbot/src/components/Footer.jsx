@@ -10,6 +10,10 @@ import {
 } from "react-icons/ri";
 import "./Styles/Footer.css";
 
+/**
+ * Footer: Componente que muestra el footer del sitio con newsletter, enlaces,
+ * información de contacto y redes sociales.
+ */
 export default function Footer({
   bgImage = "https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg", // cambia por tu imagen
 }) {

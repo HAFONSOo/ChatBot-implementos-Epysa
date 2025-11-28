@@ -9,8 +9,8 @@ import { useAuth } from "../context/AuthContext";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-// Cambia la URL fija por esto:
-const n8nUrl = import.meta.env.VITE_N8N_URL;
+// --- IMPORTANTE: Usamos la variable de entorno definida en .env ---
+const N8N_WEBHOOK_URL = import.meta.env.VITE_N8N_URL;
 
 // --- Iconos SVG ---
 const IconFiLoader = ({ className, ...props }) => (
@@ -40,6 +40,7 @@ const AuthForm = ({
   onSignUp,
   authLoading,
   authError,
+  signUpSuccess,
   onClose
 }) => {
   const [email, setEmail] = useState('');
@@ -99,6 +100,13 @@ const AuthForm = ({
           <p className="text-xs text-red-600 text-center px-4">{authError}</p>
         )}
 
+        {signUpSuccess && !isLoginView && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded relative text-center text-xs">
+                <strong className="font-bold block">¡Cuenta creada!</strong>
+                <span className="block sm:inline">{signUpSuccess}</span>
+            </div>
+        )}
+
         <button
           type="submit"
           className="w-full p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 disabled:bg-gray-400 flex items-center justify-center gap-2"
@@ -138,7 +146,15 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
 
   // Webhook n8n 
   async function sendMessageToN8n(message) {
-    const webhookUrl = 'https://implementos.app.n8n.cloud/webhook/80a5663d-7186-4f19-8b15-316f7aac4965';
+    // --- CAMBIO: Usamos la variable constante definida arriba ---
+    const webhookUrl = N8N_WEBHOOK_URL;
+    
+    // Verificación de seguridad simple por si no se cargó la variable
+    if (!webhookUrl) {
+      console.error("Error: VITE_N8N_URL no está definida en el archivo .env");
+      return "Hubo un error de configuración. Contacta a soporte.";
+    }
+
     const data = { text: message };
     
     try {
@@ -158,7 +174,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     }
   }
 
-  // --- CORRECCIÓN AQUÍ: Eliminada la indentación en el string ---
   useEffect(() => {
     setMessages([{
      sender: 'bot',
@@ -238,13 +253,10 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
       <div className="flex-1 p-2 sm:p-6 space-y-4 overflow-y-auto bg-gray-50">
         {messages.map((msg, index) => (
           <div key={index} className={`flex items-end gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-            
-            {/* --- CORRECCIÓN AQUÍ: max-w-[85%] para evitar desbordes y break-words --- */}
             <div className={`
                 max-w-[85%] sm:max-w-md p-3 rounded-2xl shadow break-words
                 ${msg.sender === 'user' ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-200 text-gray-800 rounded-bl-none'}
             `}>
-              
               <div className="text-sm prose prose-sm max-w-none">
                 <ReactMarkdown 
                   remarkPlugins={[remarkGfm]}
@@ -255,7 +267,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
                     p: ({node, ...props}) => <p className="mb-1 last:mb-0" {...props} />,
                     strong: ({node, ...props}) => <strong className="font-bold" {...props} />,
                     a: ({node, ...props}) => <a className="underline text-blue-600 hover:text-blue-800" {...props} />,
-                    // Forzamos el estilo de pre y code por si acaso llega algo como código
                     pre: ({node, ...props}) => <pre className="whitespace-pre-wrap break-all" {...props} />,
                     code: ({node, ...props}) => <code className="break-all" {...props} />
                   }}
@@ -263,7 +274,6 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
                   {msg.text}
                 </ReactMarkdown>
               </div>
-
             </div>
           </div>
         ))}
@@ -311,25 +321,40 @@ export default function Frontchatbot({ iconClosed }) {
   const [isOpen, setIsOpen] = useState(false);
   const { currentUser, signIn, signUp, signOut, loading: authLoading } = useAuth(); 
   const [authError, setAuthError] = useState('');
+  const [signUpSuccess, setSignUpSuccess] = useState('');
   const [isLoginView, setIsLoginView] = useState(true);
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
       setAuthError(''); 
+      setSignUpSuccess('');
     }
   };
 
   const handleLogin = async (email, password) => {
     setAuthError('');
+    setSignUpSuccess('');
     const { error } = await signIn(email, password);
     if (error) setAuthError(error.message);
   };
 
   const handleSignUp = async (email, password) => {
     setAuthError('');
-    const { error } = await signUp(email, password);
-    if (error) setAuthError(error.message);
+    setSignUpSuccess('');
+    const { data, error } = await signUp(email, password); // Asegúrate de que tu función signUp retorne {data, error}
+    
+    if (error) {
+        setAuthError(error.message);
+    } else {
+        // Lógica inteligente: Si hay sesión activa (usuario logueado) no mostramos el mensaje de correo
+        // Si data.session es null, significa que requiere confirmación por correo.
+        if (data?.session) {
+             // El usuario ya entró automáticamente, no hacemos nada extra
+        } else {
+             setSignUpSuccess('Mira tu bandeja de correo para confirmar tu cuenta.');
+        }
+    }
   };
   
   const handleLogout = async () => {
@@ -339,7 +364,6 @@ export default function Frontchatbot({ iconClosed }) {
   return (
     <>
       <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end font-sans">
-        {/* Contenedor del chat ajustado */}
         <div className={`
             w-[calc(100vw-32px)] sm:w-96 
             h-[80vh] sm:h-[500px] 
@@ -366,6 +390,7 @@ export default function Frontchatbot({ iconClosed }) {
               onSignUp={handleSignUp}
               authLoading={authLoading}
               authError={authError}
+              signUpSuccess={signUpSuccess}
               onClose={toggleChat}
             />
           )}

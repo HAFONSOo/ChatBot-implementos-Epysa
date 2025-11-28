@@ -4,8 +4,17 @@ import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
+/**
+ * useCart: Hook personalizado que devuelve el contexto del carrito.
+ * Permite a los componentes consumir el estado y funciones del carrito.
+ */
 export const useCart = () => useContext(CartContext);
 
+/**
+ * CartProvider: Componente proveedor que administra el estado del carrito.
+ * - Mantiene `cartItems`, `isCartOpen` y `loading`.
+ * - Proporciona funciones para leer, vaciar y controlar la visibilidad del carrito.
+ */
 export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
@@ -14,6 +23,10 @@ export const CartProvider = ({ children }) => {
     const { session } = useAuth(); 
 
     // --- 1. LEER CARRITO DE SUPABASE ---
+    /**
+     * fetchCart: Función asíncrona que consulta los items del carrito del usuario
+     * en Supabase, formatea la respuesta y actualiza el estado `cartItems`.
+     */
     const fetchCart = async () => {
         if (!session?.user?.id) {
             setCartItems([]);
@@ -57,6 +70,10 @@ export const CartProvider = ({ children }) => {
     };
 
     // --- 2. VACIAR CARRITO ---
+    /**
+     * clearCart: Función asíncrona que elimina todos los ítems del carrito del
+     * usuario en la tabla `carritoTemporal` de Supabase y limpia el estado local.
+     */
     const clearCart = async () => {
         if (!session?.user?.id) return;
 
@@ -92,14 +109,21 @@ export const CartProvider = ({ children }) => {
         return () => { supabase.removeChannel(channel); };
     }, [session]);
 
+    /**
+     * value: objeto que se expone desde el contexto con estados y acciones.
+     * - openCart, closeCart y toggleCart son atajos para controlar la UI del carrito.
+     */
     const value = {
         cartItems,
         fetchCart,
         clearCart,
         isCartOpen,
         loading,
+        // openCart: abre la vista del carrito
         openCart: () => setIsCartOpen(true),
+        // closeCart: cierra la vista del carrito
         closeCart: () => setIsCartOpen(false),
+        // toggleCart: invierte la visibilidad del carrito
         toggleCart: () => setIsCartOpen(!isCartOpen)
     };
 

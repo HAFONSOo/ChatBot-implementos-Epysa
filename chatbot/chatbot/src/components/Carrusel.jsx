@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
+/**
+ * Carrusel: Componente de slideshow que muestra una lista de imágenes con
+ * control de avance manual (prev/next) y paginación por puntos.
+ */
 function Carrusel() {
   const slides = [
     { url: 'https://images.implementos.cl/uploads/cms/slides/1760966402159.jpg' },
@@ -21,12 +25,15 @@ function Carrusel() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  /** goToPrevious: mueve el índice del carrusel a la slide anterior */
   const goToPrevious = () => {
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
   };
+  /** goToNext: avanza la slide actual del carrusel */
   const goToNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
   };
+  /** goToSlide: salta directamente a una slide específica (por índice) */
   const goToSlide = (slideIndex) => {
     setCurrentIndex(slideIndex);
   };

@@ -5,6 +5,9 @@ import "./Styles/Body.css";
 /* =========================
    Utilidades
 ========================= */
+/**
+ * CLP: Utilidad para formatear números a pesos chilenos (CLP) sin decimales.
+ */
 const CLP = (n) =>
   n.toLocaleString("es-CL", {
     style: "currency",
@@ -15,6 +18,10 @@ const CLP = (n) =>
 /* =========================
    Tarjeta de producto
 ========================= */
+/**
+ * ProductCard: Componente que representa una tarjeta de producto con imagen,
+ * marca, nombre y precio. Incluye botón para agregar al carrito (sin lógica)
+ */
 function ProductCard({ image, brand, name, price, iva = true }) {
   return (
     <div className="card">
@@ -36,6 +43,11 @@ function ProductCard({ image, brand, name, price, iva = true }) {
 /* =========================
    Vitrina con tabs
 ========================= */
+/**
+ * TabbedShelf: Vitrina con tabs que permite cambiar entre secciones de productos.
+ * - titleTabs: array con títulos de cada pestaña
+ * - sections: datos (hero, products, banner) para cada pestaña
+ */
 function TabbedShelf({ titleTabs = [], sections }) {
   const [tab, setTab] = useState(0);
   const data = sections[tab];
@@ -92,6 +104,9 @@ function TabbedShelf({ titleTabs = [], sections }) {
 /* =========================
    Grid categorías (No te lo puedes perder)
 ========================= */
+/**
+ * CategoryGrid: Renderiza una cuadrícula de categorías con imágenes y texto.
+ */
 function CategoryGrid({ title, subtitle, items }) {
   return (
     <section className="cat-grid">
@@ -113,8 +128,13 @@ function CategoryGrid({ title, subtitle, items }) {
 /* =========================
    Carrusel de recomendados
 ========================= */
+/**
+ * RecsCarousel: Carrusel horizontal de recomendaciones con navegación
+ * (se desplaza por la lista usando scroll suave).
+ */
 function RecsCarousel({ title, subtitle, products }) {
   const ref = useRef(null);
+  /** scrollBy: desplaza el rail de recomendaciones en px (positivo o negativo) */
   const scrollBy = (px) =>
     ref.current && ref.current.scrollBy({ left: px, behavior: "smooth" });
 
@@ -153,6 +173,9 @@ function RecsCarousel({ title, subtitle, products }) {
 /* =========================
    Blog + Marcas
 ========================= */
+/**
+ * BlogBlock: Bloque que muestra una imagen y una lista de posts del blog con CTA.
+ */
 function BlogBlock({ image, posts }) {
   return (
     <section className="blog">
@@ -185,6 +208,10 @@ function BlogBlock({ image, posts }) {
   );
 }
 
+/**
+ * BrandsBlock: Muestra el carrusel o grid de logos de marcas y características
+ * relevantes de la tienda.
+ */
 function BrandsBlock({ logos, features }) {
   return (
     <section className="brands">
@@ -214,6 +241,11 @@ function BrandsBlock({ logos, features }) {
 /* =========================
    BODY principal
 ========================= */
+/**
+ * Body: Componente principal que compone la estructura del contenido de la
+ * página (vitrinas, categorías, recomendados, blog y marcas). Contiene datos
+ * de ejemplo para poblar los componentes secundarios.
+ */
 export default function Body() {
   // ===== Data con imágenes de referencia (puedes cambiarlas por las tuyas) =====
   const shelf1 = {

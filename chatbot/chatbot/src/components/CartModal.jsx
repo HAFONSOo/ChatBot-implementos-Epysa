@@ -1,6 +1,10 @@
 import React from 'react';
 import { useCart } from '../context/CartContext.jsx';
 
+/**
+ * CartModal: Sidebar que muestra los artículos del carrito y acciones como
+ * vaciar carrito o proceder al pago. Se muestra/oculta según `isCartOpen`.
+ */
 export default function CartModal() {
     // Extraemos las funciones y estados del contexto
     const { cartItems, isCartOpen, closeCart, loading, clearCart } = useCart();
@@ -8,7 +12,7 @@ export default function CartModal() {
     // Si no está abierto, no renderizamos nada
     if (!isCartOpen) return null;
 
-    // Cálculo del total
+    // Cálculo del total (suma de precioUnitario * cantidad)
     const total = cartItems.reduce((sum, it) => sum + (Number(it.precioUnitario || 0) * Number(it.cantidad || 0)), 0);
 
     return (

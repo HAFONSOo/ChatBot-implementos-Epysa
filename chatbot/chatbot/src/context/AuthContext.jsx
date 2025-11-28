@@ -4,10 +4,19 @@ import { supabase } from '../supabaseClient'; // 1. Importa tu cliente
 
 const AuthContext = createContext();
 
+/**
+ * useAuth: Hook de conveniencia para consumir el contexto de autenticación.
+ * Devuelve el objeto `AuthContext` con el usuario actual, sesión y helpers.
+ */
 export const useAuth = () => {
     return useContext(AuthContext);
 };
 
+/**
+ * AuthProvider: Componente proveedor que maneja la autenticación con Supabase.
+ * - Mantiene `currentUser`, `session`, y `loading`.
+ * - Escucha cambios de autenticación con `supabase.auth.onAuthStateChange`.
+ */
 export const AuthProvider = ({ children }) => {
     const [currentUser, setCurrentUser] = useState(null);
     const [session, setSession] = useState(null); // Para guardar el token
@@ -36,8 +45,11 @@ export const AuthProvider = ({ children }) => {
     const value = {
         currentUser,
         session, 
+        // signIn: inicia sesión usando supabase con credenciales (email, password)
         signIn: (email, password) => supabase.auth.signInWithPassword({ email, password }),
+        // signOut: cierra la sesión actual
         signOut: () => supabase.auth.signOut(),
+        // signUp: registra un nuevo usuario con email y password
         signUp: (email, password) => supabase.auth.signUp({ email, password }) // <-- LÍNEA CORREGIDA
     };
 

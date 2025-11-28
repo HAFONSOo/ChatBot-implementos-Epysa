@@ -8,6 +8,10 @@ import lubricantesImg from "../assets/lubricantes.webp";
 import seguridadImg from "../assets/seguridad.jpg";
 import bateriasImg from "../assets/baterias.jpg";
 
+/**
+ * SeccionInferior: Componente que renderiza las secciones inferiores de la
+ * página principal (banners, promociones y categorías rápidas).
+ */
 export default function SeccionInferior() {
   return (
     <div className="flex flex-col items-center justify-center w-full bg-white py-6">

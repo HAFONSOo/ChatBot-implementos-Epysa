@@ -1,9 +1,16 @@
 import { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 
+/**
+ * SearchBar: Componente de barra de búsqueda que maneja la consulta y el envío.
+ */
 export default function SearchBar() {
   const [query, setQuery] = useState('');
 
+  /**
+   * handleSearch: Previene el envío por defecto y procesa la consulta (aquí se
+   * loggea en consola; se podría conectar a rutas o filtros reales).
+   */
   const handleSearch = (e) => {
     e.preventDefault(); 
     if (!query.trim()) return; 
