@@ -182,7 +182,8 @@ const ChatInterface = ({ userEmail, onLogout, onClose }) => {
     1. Estado de tu pedido
     2. Resolver algun problema con tu compra
     3. Consultar productos en oferta
-    4. Agregar implementos a tu carrito`
+    4. Agregar implementos a tu carrito
+    5. hablar con soporte `
     }]);
   }, []);
 
