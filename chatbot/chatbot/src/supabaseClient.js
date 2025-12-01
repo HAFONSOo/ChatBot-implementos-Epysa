@@ -1,11 +1,15 @@
 
-import { createClient } from '@supabase/supabase-js'
+
 
 /**
  * supabaseClient: Inicializa y exporta el cliente de Supabase.
  * NOTA: la `supabaseKey` está en texto plano aquí para propósitos de desarrollo,
  * se recomienda usar variables de entorno en producción.
  */
-const supabaseUrl = 'https://iyjpcywewsbyhjkpctbc.supabase.co'
-const supabaseKey ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5anBjeXdld3NieWhqa3BjdGJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI2NDMxMTQsImV4cCI6MjA3ODIxOTExNH0.c_XCzQNft1ZJCg6kpU1m5EaID0YV5dTq91RKlBrIz1o'
-export const supabase = createClient(supabaseUrl, supabaseKey)
+// src/supabaseClient.js (o donde inicialices Supabase)
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
